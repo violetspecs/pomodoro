@@ -1,7 +1,10 @@
 console.log("test")
 
+navigator.serviceWorker.register('service-worker.js');
+
 let timer
 let time
+let currentTime
 let isBreak = false
 
 const startButton = document.querySelector("#start")
@@ -14,8 +17,8 @@ const minutesDisplay = document.querySelector("#min")
 const secondsDisplay = document.querySelector("#sec")
 
 function setClockDisplay() {
-    let mins = Math.floor(time / 60)
-    let secs = time - (mins * 60)
+    let mins = Math.floor(currentTime / 60)
+    let secs = currentTime - (mins * 60)
     minutesDisplay.innerHTML = String(mins).padStart(2, '0')
     secondsDisplay.innerHTML = String(secs).padStart(2, '0')
 }
@@ -25,23 +28,28 @@ function setTextDisplay(text) {
 }
 
 function setStandardTimer() {
-    time = 10
+    time = 25*60
+    currentTime = time
     setClockDisplay()
     setTextDisplay("Timer")
 }
 
 function setShortBreak() {
-    time = 5
+    time = 5*60
+    currentTime = time
     setClockDisplay()
     setTextDisplay("Short break")
 }
 
 function startTimer() {
+    let start = Date.now();
     timer = setInterval(() => {
-        time -= 1
-        if (time == -1) {
+        let delta = Date.now() - start;
+        currentTime = time - Math.floor(delta/1000)
+        if (currentTime < 0) {
             // time's up
             clearInterval(timer)
+            timeUpNotification()
             if (isBreak) {
                 setStandardTimer()
                 isBreak = false
@@ -49,13 +57,13 @@ function startTimer() {
                 setShortBreak()
                 isBreak = true
             }
-            timeUpNotification()
         }
         setClockDisplay()
-    }, 1000)
+    }, 100)
 }
 
 function stopTimer() {
+    time = currentTime
     clearInterval(timer)
 }
 
@@ -72,7 +80,11 @@ function timeUpNotification() {
     const options = {
         body: "Time's up!"
     }
-    new Notification("Timer", options);
+    if (isBreak) {
+        new Notification("Time start!", options);
+    } else {
+        new Notification("Time for Short Break", options);
+    }
 }
 
 startButton.addEventListener('click', (event) => {
@@ -106,7 +118,7 @@ setStandardTimer()
 
 Notification.requestPermission().then((result) => {
     if (result === "granted") {
-        timeUpNotification();
+        //timeUpNotification();
     }
 });
 
