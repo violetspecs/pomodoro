@@ -81,11 +81,15 @@ function timeUpNotification() {
         body: "Time's up!",
         requireInteraction: true
     }
+    let notification
     if (isBreak) {
-        new Notification("Time start!", options);
+        notification = new Notification("Time start!", options);
     } else {
-        new Notification("Time for Short Break", options);
+        notification = new Notification("Time for Short Break", options);
     }
+    notification.addEventListener('click', (event) => {
+        startTimer()
+    })
 }
 
 startButton.addEventListener('click', (event) => {
