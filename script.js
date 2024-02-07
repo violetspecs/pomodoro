@@ -2,19 +2,27 @@ console.log("test")
 
 navigator.serviceWorker.register('service-worker.js');
 
-let timer
-let time
-let currentTime
-let isBreak = false
-
 const startButton = document.querySelector("#start")
 const stopButton = document.querySelector("#stop")
 const resetButton = document.querySelector("#reset")
 const standardButton = document.querySelector("#standard")
 const shortButton = document.querySelector("#short")
+const longButton = document.querySelector("#long")
 const breakDisplay = document.querySelector("#breakDisplay")
 const minutesDisplay = document.querySelector("#min")
 const secondsDisplay = document.querySelector("#sec")
+const sessionsDisplay = document.querySelector("#sessions")
+const timerState = {
+    STANDARD: 0,
+    SHORT: 1,
+    LONG: 2
+}
+
+let timer
+let time
+let currentTime
+let currentState = timerState.STANDARD
+let totalCycles = 0
 
 function setClockDisplay() {
     let mins = Math.floor(currentTime / 60)
@@ -41,6 +49,17 @@ function setShortBreak() {
     setTextDisplay("Short break")
 }
 
+function setLongBreak() {
+    time = 15*60
+    currentTime = time
+    setClockDisplay()
+    setTextDisplay("Long break")
+}
+
+function setSessionsDisplay() {
+    sessionsDisplay.innerHTML = totalCycles.toString()
+}
+
 function startTimer() {
     let start = Date.now();
     timer = setInterval(() => {
@@ -50,12 +69,19 @@ function startTimer() {
             // time's up
             clearInterval(timer)
             timeUpNotification()
-            if (isBreak) {
+            if (currentState == timerState.SHORT || currentState == timerState.LONG) {
                 setStandardTimer()
-                isBreak = false
+                currentState = timerState.STANDARD
             } else {
-                setShortBreak()
-                isBreak = true
+                totalCycles += 1
+                setSessionsDisplay()
+                if (totalCycles % 4 == 0) {
+                    setLongBreak()
+                    currentState = timerState.LONG
+                } else {
+                    setShortBreak()
+                    currentState = timerState.SHORT
+                }
             }
         }
         setClockDisplay()
@@ -69,10 +95,16 @@ function stopTimer() {
 
 function resetTimer() {
     stopTimer()
-    if (isBreak) {
-        setShortBreak()
-    } else {
-        setStandardTimer()
+    switch (currentState) {
+        case timerState.STANDARD:
+            setStandardTimer()
+            break;
+        case timerState.SHORT:
+            setShortBreak()
+            break;
+        case timerState.LONG:
+            setLongBreak()
+            break
     }
 }
 
@@ -81,12 +113,17 @@ function timeUpNotification() {
         body: "Time's up!",
         requireInteraction: true
     }
-    let notification
-    if (isBreak) {
-        notification = new Notification("Time start!", options);
-    } else {
-        notification = new Notification("Time for Short Break", options);
+    let displayText = "Time start!"
+    switch (currentState) {
+        case timerState.SHORT:
+            displayText = "Time for Short Break"
+            break;
+        case timerState.LONG:
+            displayText = "Time for Long Break"
+            break
     }
+
+    let notification = new Notification(displayText, options);
     notification.addEventListener('click', (event) => {
         startTimer()
     })
@@ -109,13 +146,19 @@ resetButton.addEventListener('click', (event) => {
 
 standardButton.addEventListener('click', (event) => {
     console.log('click pomodoro')
-    isBreak = false
+    currentState = timerState.STANDARD
     resetTimer()
 })
 
 shortButton.addEventListener('click', (event) => {
     console.log('click short')
-    isBreak = true
+    currentState = timerState.SHORT
+    resetTimer()
+})
+
+longButton.addEventListener('click', (event) => {
+    console.log('click long')
+    currentState = timerState.LONG
     resetTimer()
 })
 
