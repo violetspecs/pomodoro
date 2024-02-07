@@ -1,0 +1,12 @@
+{
+    "name": "Pomodoro Timer",
+    "start_url": ".",
+    "display": "standalone",
+    "icons": [
+      {
+        "src": "icons/timer_pic.png",
+        "type": "image/png",
+        "sizes": "512x512"
+      }
+    ]
+  }

@@ -77,3 +77,116 @@ self.addEventListener('install', function (event) {
 		return cache;
 	}));
 });
+
+// On version update, remove old cached files
+self.addEventListener('activate', function (event) {
+	event.waitUntil(caches.keys().then(function (keys) {
+
+		// Get the keys of the caches to remove
+		let keysToRemove = keys.filter(function (key) {
+			return !cacheIDs.includes(key);
+		});
+
+		// Delete each cache
+		let removed = keysToRemove.map(function (key) {
+			return caches.delete(key);
+		});
+
+		return Promise.all(removed);
+
+	}).then(function () {
+		return self.clients.claim();
+	}));
+});
+
+// Trim caches over a certain size
+self.addEventListener('message', function (event) {
+
+	// Make sure the event was from a trusted site
+	// if (event.origin !== 'https://your-awesome-website.com') return;
+
+	// Only run on cleanUp messages
+	if (event.data !== 'cleanUp') return;
+
+	// Trim the cache
+	trimCache('pages', limits.pages);
+	trimCache('img', limits.imgs);
+
+});
+
+// Listen for request events
+self.addEventListener('fetch', function (event) {
+
+	// Get the request
+	let request = event.request;
+
+	// Bug fix
+	// https://stackoverflow.com/a/49719964
+	if (event.request.cache === 'only-if-cached' && event.request.mode !== 'same-origin') return;
+
+	// HTML files
+	// Network-first
+	if (request.headers.get('Accept').includes('text/html')) {
+		event.respondWith(
+			fetch(request).then(function (response) {
+
+				// Create a copy of the response and save it to the cache
+				let copy = response.clone();
+				event.waitUntil(caches.open(pageID).then(function (cache) {
+					return cache.put(request, copy);
+				}));
+
+				// Return the response
+				return response;
+
+			}).catch(function (error) {
+
+				// If there's no item in cache, respond with a fallback
+				return caches.match(request).then(function (response) {
+					return response || caches.match('/offline.html');
+				});
+
+			})
+		);
+	}
+
+	// CSS & JavaScript
+	// Offline-first
+	if (request.headers.get('Accept').includes('text/css') || request.headers.get('Accept').includes('text/javascript')) {
+		event.respondWith(
+			caches.match(request).then(function (response) {
+				return response || fetch(request).then(function (response) {
+
+					// Return the response
+					return response;
+
+				});
+			})
+		);
+		return;
+	}
+
+	// Images & Fonts
+	// Offline-first
+	if (request.headers.get('Accept').includes('image') || request.url.includes('your-web-font')) {
+		event.respondWith(
+			caches.match(request).then(function (response) {
+				return response || fetch(request).then(function (response) {
+
+					// If the request is for an image, save a copy of it in cache
+					if (request.headers.get('Accept').includes('image')) {
+						let copy = response.clone();
+						event.waitUntil(caches.open(imgID).then(function (cache) {
+							return cache.put(request, copy);
+						}));
+					}
+
+					// Return the response
+					return response;
+
+				});
+			})
+		);
+		return;
+	}
+});

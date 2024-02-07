@@ -78,7 +78,8 @@ function resetTimer() {
 
 function timeUpNotification() {
     const options = {
-        body: "Time's up!"
+        body: "Time's up!",
+        requireInteraction: true
     }
     if (isBreak) {
         new Notification("Time start!", options);
