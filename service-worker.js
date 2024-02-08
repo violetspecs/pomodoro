@@ -22,7 +22,7 @@ let limits = {
 };
 
 // Core assets
-let coreAssets = [];
+let coreAssets = ['manifest.json', 'script.js'];
 
 
 //

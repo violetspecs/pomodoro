@@ -68,7 +68,6 @@ function startTimer() {
         if (currentTime < 0) {
             // time's up
             clearInterval(timer)
-            timeUpNotification()
             if (currentState == timerState.SHORT || currentState == timerState.LONG) {
                 setStandardTimer()
                 currentState = timerState.STANDARD
@@ -83,6 +82,7 @@ function startTimer() {
                     currentState = timerState.SHORT
                 }
             }
+            timeUpNotification()
         }
         setClockDisplay()
     }, 100)
