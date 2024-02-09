@@ -1,21 +1,29 @@
 <html>
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="manifest" href="manifest.json" />
+        <link rel="stylesheet" href="style.css">
         <title>Timer</title>
     </head>
     <body>
-        <p id="breakDisplay">Timer</p>
-        <p>
-            <span id="min">25</span>:
-            <span id="sec">00</span>
-        </p>
-        <button id="start">Start</button>
-        <button id="stop">Stop</button>
-        <button id="reset">Reset</button>
-        <button id="standard">Timer</button>
-        <button id="short">Short</button>
-        <button id="long">Long</button>
-        <p>Total sessions: <span id="sessions">0</span></p>
+        <div class="container">
+            <div id="breakDisplay" class="label">Timer</div>
+            <p class="timer-display">
+                <span id="min">25</span> :
+                <span id="sec">00</span>
+            </p>
+            <div class="button-group">
+                <button id="start">Start</button>
+                <button id="stop">Stop</button>
+                <button id="reset">Reset</button>
+            </div>
+            <div class="button-group">
+                <button id="standard">Timer</button>
+                <button id="short">Short</button>
+                <button id="long">Long</button>
+            </div>
+            <p class="label">Total sessions: <span id="sessions">0</span></p>
+        </div>
         <script src="./script.js">
             
         </script>

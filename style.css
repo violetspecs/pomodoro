@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap');
+ body, html {
+    margin: 0;
+    padding: 0;
+ }
+ body {
+    font-family: 'DM Serif Display', serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 100vh;
+ }
+
+ .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+ }
+
+ .timer-display {
+    color: #07090F;
+    font-size: 5em;
+ }
+
+ .label {
+    color: #37515F;
+    font-size: 2.5em;
+ }
+
+ button {
+    font-size: 1.8em;
+    color: #FCFCFC;
+    background-color: #37515F;
+    border: none;
+    padding: 10px;
+    border-radius: 5px; 
+    min-height: 30px;
+    min-width: 100px;
+ }
+
+ .button-group {
+    margin: 5px;
+ }
+
+ @media only screen and (min-width: 480px) {
+    body {
+        min-height: 90vh;
+    }
+
+    .timer-display {
+        font-size: 5em;
+    }
+
+    .label {
+        font-size: 2.5em;
+    }
+
+    button {
+        font-size: 2em;
+        padding: 10px;
+        border-radius: 5px;
+        min-height: 30px;
+        min-width: 120px;
+    }
+
+    button:hover {
+        background-color: #98473E;
+        transition: 0.7s;
+    }
+ }
