@@ -3,7 +3,6 @@ console.log("test")
 navigator.serviceWorker.register('service-worker.js');
 
 const startButton = document.querySelector("#start")
-const stopButton = document.querySelector("#stop")
 const resetButton = document.querySelector("#reset")
 const standardButton = document.querySelector("#standard")
 const shortButton = document.querySelector("#short")
@@ -23,6 +22,7 @@ let time
 let currentTime
 let currentState = timerState.STANDARD
 let totalCycles = 0
+let isStartState = true
 
 function setClockDisplay() {
     let mins = Math.floor(currentTime / 60)
@@ -33,6 +33,16 @@ function setClockDisplay() {
 
 function setTextDisplay(text) {
     breakDisplay.innerHTML = text
+}
+
+function setStartButtonDisplay() {
+    if (isStartState) {
+        startButton.querySelector("i").classList.remove('fa-pause')
+        startButton.querySelector("i").classList.add('fa-play')
+    } else {
+        startButton.querySelector("i").classList.remove('fa-play')
+        startButton.querySelector("i").classList.add('fa-pause')
+    }
 }
 
 function setStandardTimer() {
@@ -86,11 +96,13 @@ function startTimer() {
         }
         setClockDisplay()
     }, 100)
+    isStartState = false
 }
 
 function stopTimer() {
     time = currentTime
     clearInterval(timer)
+    isStartState = true
 }
 
 function resetTimer() {
@@ -131,17 +143,18 @@ function timeUpNotification() {
 
 startButton.addEventListener('click', (event) => {
     console.log('click start')
-    startTimer()
-})
-
-stopButton.addEventListener('click', (event) => {
-    console.log('click stop')
-    stopTimer()
+    if (isStartState) {
+        startTimer()
+    } else {
+        stopTimer()
+    }
+    setStartButtonDisplay()
 })
 
 resetButton.addEventListener('click', (event) => {
     console.log('click reset')
     resetTimer()
+    setStartButtonDisplay()
 })
 
 standardButton.addEventListener('click', (event) => {

@@ -44,6 +44,12 @@
     margin: 5px;
  }
 
+ .timer-controls button {
+   font-size: 3em;
+   min-height: 90px;
+   border-radius: 30px;
+ }
+
  @media only screen and (min-width: 480px) {
     body {
         min-height: 90vh;
@@ -61,7 +67,7 @@
         font-size: 2em;
         padding: 10px;
         border-radius: 5px;
-        min-height: 30px;
+        min-height: 50px;
         min-width: 120px;
     }
 
