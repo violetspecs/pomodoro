@@ -93,6 +93,8 @@ function startTimer() {
                 }
             }
             timeUpNotification()
+            isStartState = true
+            setStartButtonDisplay()
         }
         setClockDisplay()
     }, 100)
@@ -138,6 +140,7 @@ function timeUpNotification() {
     let notification = new Notification(displayText, options);
     notification.addEventListener('click', (event) => {
         startTimer()
+        setStartButtonDisplay()
     })
 }
 
