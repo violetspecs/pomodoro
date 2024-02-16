@@ -22,7 +22,7 @@ let time
 let currentTime
 let currentState = timerState.STANDARD
 let totalCycles = 0
-let isStartState = true
+let isStoppedState = true
 
 function setClockDisplay() {
     let mins = Math.floor(currentTime / 60)
@@ -36,7 +36,7 @@ function setTextDisplay(text) {
 }
 
 function setStartButtonDisplay() {
-    if (isStartState) {
+    if (isStoppedState) {
         startButton.querySelector("i").classList.remove('fa-pause')
         startButton.querySelector("i").classList.add('fa-play')
     } else {
@@ -93,18 +93,18 @@ function startTimer() {
                 }
             }
             timeUpNotification()
-            isStartState = true
+            isStoppedState = true
             setStartButtonDisplay()
         }
         setClockDisplay()
     }, 100)
-    isStartState = false
+    isStoppedState = false
 }
 
 function stopTimer() {
     time = currentTime
     clearInterval(timer)
-    isStartState = true
+    isStoppedState = true
 }
 
 function resetTimer() {
@@ -139,14 +139,17 @@ function timeUpNotification() {
 
     let notification = new Notification(displayText, options);
     notification.addEventListener('click', (event) => {
-        startTimer()
-        setStartButtonDisplay()
+        if (isStoppedState) {
+            startTimer()
+            setStartButtonDisplay()
+        }
+        
     })
 }
 
 startButton.addEventListener('click', (event) => {
     console.log('click start')
-    if (isStartState) {
+    if (isStoppedState) {
         startTimer()
     } else {
         stopTimer()
