@@ -99,12 +99,14 @@ function startTimer() {
         setClockDisplay()
     }, 100)
     isStoppedState = false
+    setStartButtonDisplay()
 }
 
 function stopTimer() {
     time = currentTime
     clearInterval(timer)
     isStoppedState = true
+    setStartButtonDisplay()
 }
 
 function resetTimer() {
@@ -141,9 +143,7 @@ function timeUpNotification() {
     notification.addEventListener('click', (event) => {
         if (isStoppedState) {
             startTimer()
-            setStartButtonDisplay()
         }
-        
     })
 }
 
@@ -154,13 +154,11 @@ startButton.addEventListener('click', (event) => {
     } else {
         stopTimer()
     }
-    setStartButtonDisplay()
 })
 
 resetButton.addEventListener('click', (event) => {
     console.log('click reset')
     resetTimer()
-    setStartButtonDisplay()
 })
 
 standardButton.addEventListener('click', (event) => {
