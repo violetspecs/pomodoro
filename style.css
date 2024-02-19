@@ -34,6 +34,7 @@
  }
 
  button {
+    font-family: inherit;
     font-size: 1.8em;
     color: #FCFCFC;
     background-color: #37515F;
